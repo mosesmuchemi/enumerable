@@ -102,7 +102,7 @@ module Enumerable
 
   def my_inject(arg = self[0])
     my_each_with_index do |value, index|
-      arg = yield(arg, value) if index > 0
+      arg = yield(arg, value) if index.positive?
     end
     arg
   end
@@ -111,4 +111,3 @@ end
 def multiply_els(arr)
   arr.my_inject { |a, b| a * b }
 end
-
