@@ -95,7 +95,7 @@ module Enumerable
 
     arr = []
     my_each do |i|
-      arr << !arg.nil? ? arg.call(i) : yield(i)
+      arr.push(!arg.nil? ? arg.call(i) : yield(i))
     end
     arr
   end
