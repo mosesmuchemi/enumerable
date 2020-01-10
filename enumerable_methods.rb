@@ -21,4 +21,12 @@ module Enumerable
       i += 1
     end
   end
+
+  def my_select
+    return to_enum unless block_given?
+
+    item_select = []
+    my_each { |i| item_select << i if yield(i) }
+    item_select
+  end
 end
