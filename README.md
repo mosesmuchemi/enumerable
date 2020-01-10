@@ -11,6 +11,8 @@ To run the project git clone https://github.com/mosesmuchemi/enumerable.git and 
 
      ruby enumerable_methods.rb
 
+Find the live link to execute the methods [here}(https://repl.it/@mosesmuchemi/enumerable-methods)
+
 
 You can find the original project specification under Assignment 2:
 
