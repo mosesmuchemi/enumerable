@@ -29,4 +29,51 @@ module Enumerable
     my_each { |i| item_select << i if yield(i) }
     item_select
   end
+
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def my_all?(param = nil)
+    if block_given?
+      my_each { |i| return false unless yield(i) }
+    elsif param.class == Class
+      my_each { |i| return false unless i.class == param }
+    elsif param.class == Regexp
+      my_each { |i| return false unless i =~ param }
+    elsif param.nil?
+      my_each { |i| return false unless i }
+    else
+      my_each { |i| return false unless i == param }
+    end
+    true
+  end
+
+  def my_any?(param = nil)
+    if block_given?
+      my_each { |i| return true if yield(i) }
+    elsif param.class == Class
+      my_each { |i| return true if i.class == param }
+    elsif param.class == Regexp
+      my_each { |i| return true if i =~ param }
+    elsif param.nil?
+      my_each { |i| return true if i }
+    else
+      my_each { |i| return true if i == param }
+    end
+    false
+  end
+
+  def my_none?(param = nil)
+    if block_given?
+      my_each { |i| return false if yield(i) }
+    elsif param.class == Class
+      my_each { |i| return false if i.class == param }
+    elsif param.class == Regexp
+      my_each { |i| return false if i =~ param }
+    elsif param.nil?
+      my_each { |i| return false if i }
+    else
+      my_each { |i| return false if i == param }
+    end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    true
+  end
 end
