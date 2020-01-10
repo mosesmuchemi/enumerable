@@ -76,4 +76,39 @@ module Enumerable
     # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     true
   end
+
+  def my_count(items = nil)
+    count = 0
+    if block_given?
+      my_each { |i| count += 1 if yield(i) == true }
+    elsif items.nil?
+      my_each { count += 1 }
+    else
+      my_each { |i| count += 1 if i == items }
+    end
+    count
+  end
+
+  # refactored to take in proc or block
+  def my_map(arg = nil)
+    return :my_map unless block_given?
+
+    arr = []
+    my_each do |i|
+      arr << !arg.nil? ? arg.call(i) : yield(i)
+    end
+    arr
+  end
+
+  def my_inject(arg = self[0])
+    my_each_with_index do |value, index|
+      arg = yield(arg, value) if index > 0
+    end
+    arg
+  end
 end
+
+def multiply_els(arr)
+  arr.my_inject { |a, b| a * b }
+end
+
