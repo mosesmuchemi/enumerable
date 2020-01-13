@@ -91,7 +91,7 @@ module Enumerable
 
   # refactored to take in proc or block
   def my_map(arg = nil)
-    return :my_map unless block_given?
+    return to_enum unless block_given?
 
     arr = []
     my_each do |i|
@@ -100,11 +100,13 @@ module Enumerable
     arr
   end
 
-  def my_inject(arg = self[0])
-    my_each_with_index do |value, index|
-      arg = yield(arg, value) if index.positive?
-    end
-    arg
+  def my_inject(memo = nil, enum = each)
+    return enum_for(:my_inject) unless block_given?
+
+    memo = enum.next if memo.nil?
+    my_inject(yield(memo, enum.next), enum, &Proc.new)
+  rescue StopIteration
+    memo
   end
 end
 
