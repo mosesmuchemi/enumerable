@@ -100,13 +100,23 @@ module Enumerable
     arr
   end
 
-  def my_inject(memo = nil, enum = each)
-    return enum_for(:my_inject) unless block_given?
+  def my_inject(*args)
+    if args.size == 2
+      my_inject_binary_operation(args[0], args[1], self)
+    elsif args.size == 1 && !block_given?
+      my_inject_binary_operation(first, args[0], drop(1))
+    else
+      the_memo = args[0] || first
+      each { |item| the_memo = yield(the_memo, item) if block_given? }
+      the_memo
+    end
+  end
 
-    memo = enum.next if memo.nil?
-    my_inject(yield(memo, enum.next), enum, &Proc.new)
-  rescue StopIteration
-    memo
+  def my_inject_binary_operation(the_memo, operator, enum)
+    return "#{operator} is not a symbol" unless operator.is_a?(Symbol)
+
+    enum.each { |item| the_memo = the_memo.send(operator, item) }
+    the_memo
   end
 end
 
