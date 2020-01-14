@@ -125,13 +125,6 @@ module Enumerable
     end
     accumulator
   end
-
-  def my_inject_binary_operation(the_memo, operator, enum)
-    return "#{operator} is not a symbol" unless operator.is_a?(Symbol)
-
-    enum.each { |item| the_memo = the_memo.send(operator, item) }
-    the_memo
-  end
 end
 
 # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
