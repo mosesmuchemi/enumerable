@@ -73,7 +73,6 @@ module Enumerable
     else
       my_each { |i| return false if i == param }
     end
-    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     true
   end
 
@@ -100,16 +99,31 @@ module Enumerable
     arr
   end
 
-  def my_inject(*args)
-    if args.size == 2
-      my_inject_binary_operation(args[0], args[1], self)
-    elsif args.size == 1 && !block_given?
-      my_inject_binary_operation(first, args[0], drop(1))
-    else
-      the_memo = args[0] || first
-      each { |item| the_memo = yield(the_memo, item) if block_given? }
-      the_memo
+  def my_inject(accumulator = nil, operation = nil, &block)
+    if operation.nil? && block.nil?
+      operation = accumulator
+      accumulator = nil
     end
+    block = case operation
+            when Symbol
+              ->(acc, value) { acc.send(operation, value) }
+            when nil
+              block
+            else
+              raise ArgumentError, 'the operation provided must be a symbol'
+            end
+    if accumulator.nil?
+      ignore_first = true
+      accumulator = first
+    end
+
+    index = 0
+
+    each do |element|
+      accumulator = block.call(accumulator, element) unless ignore_first && index.zero?
+      index += 1
+    end
+    accumulator
   end
 
   def my_inject_binary_operation(the_memo, operator, enum)
@@ -120,6 +134,7 @@ module Enumerable
   end
 end
 
+# rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 def multiply_els(arr)
   arr.my_inject { |a, b| a * b }
 end
